@@ -1,0 +1,15 @@
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Ali Admin", "email": "ali.admin@example.com", "password": "SuperSecret123"}'
+
+
+curl -i -X POST http://localhost:3000/api/auth/callback/credentials \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "email=ali.admin@example.com&password=SuperSecret123"
+
+
+curl -X GET http://localhost:3000/api/auth/session \
+  -H "Cookie: next-auth.session-token=YOUR_SESSION_TOKEN"
+
+curl -X POST http://localhost:3000/api/auth/signout \
+  -H "Cookie: next-auth.session-token=YOUR_SESSION_TOKEN"
