@@ -34,3 +34,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# database
+*.db
+dev.db
+
+# uploads (local)
+/public/uploads/
+
+# logs
+logs
+*.log
+
+# prisma
+/prisma/migrations/*
+!/prisma/migrations/migration_lock.toml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
