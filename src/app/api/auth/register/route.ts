@@ -10,7 +10,7 @@ import {
   errorResponse, 
   validateRequest 
 } from "@/lib/error-handler";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
   const body = await request.json();

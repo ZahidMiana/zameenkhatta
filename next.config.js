@@ -17,12 +17,6 @@ const nextConfig = {
   swcMinify: true,
   poweredByHeader: false,
   compress: true,
-  // Handle file uploads
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
   // Redirect configurations
   async redirects() {
     return [

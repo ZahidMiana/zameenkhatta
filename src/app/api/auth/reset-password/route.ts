@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { asyncHandler, successResponse, errorResponse, validateRequest } from "@/lib/error-handler";
 import { z } from "zod";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 const resetPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address (e.g., user@example.com)'),
