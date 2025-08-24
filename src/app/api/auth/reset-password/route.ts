@@ -47,20 +47,30 @@ export const POST = asyncHandler(async (request: NextRequest) => {
   // Hash new password
   const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-  // Update user password and mark OTP as used
-  await Promise.all([
-    prisma.user.update({
+  // Update user password and mark OTP as used in a transaction
+  await prisma.$transaction(async (tx) => {
+    // Update user password
+    await tx.user.update({
       where: { email },
-      data: { password: hashedPassword },
-    }),
-    prisma.passwordReset.update({
-      where: { id: resetRequest.id },
+      data: { 
+        password: hashedPassword,
+        // Update timestamp to ensure session refresh
+        updatedAt: new Date()
+      },
+    });
+    
+    // Mark all password reset requests for this email as used
+    await tx.passwordReset.updateMany({
+      where: { email },
       data: { used: true },
-    }),
-  ]);
+    });
+  });
+
+  // Log successful password reset
+  console.log(`Password reset successful for user: ${email}`);
 
   return successResponse(
-    null,
+    { resetComplete: true },
     'Password reset successfully. You can now login with your new password.'
   );
 });
