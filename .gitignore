@@ -25,7 +25,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env
 .env*.local
 
 # vercel
@@ -55,3 +54,4 @@ logs
 .idea/
 *.swp
 *.swo
+config.bat

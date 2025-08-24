@@ -37,6 +37,7 @@ export const authOptions: NextAuthOptions = {
 
           // Don't reveal if user exists or not
           if (!user || !user.password) {
+            console.log(`Login failed: User not found for email: ${credentials.email}`);
             throw new Error("Invalid email or password");
           }
 
@@ -44,10 +45,15 @@ export const authOptions: NextAuthOptions = {
             credentials.password,
             user.password,
           );
+          
           if (!passwordMatch) {
+            console.log(`Login failed: Incorrect password for email: ${credentials.email}`);
             throw new Error("Invalid email or password");
           }
 
+          console.log(`Login successful for user: ${user.email}`);
+
+          // Return user data for session
           const { password, createdAt, updatedAt, ...safeUser } = user;
           return safeUser as SafeUser;
         } catch (err: any) {

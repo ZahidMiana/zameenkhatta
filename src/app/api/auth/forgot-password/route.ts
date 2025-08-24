@@ -29,6 +29,17 @@ export const POST = asyncHandler(async (request: NextRequest) => {
   const otp = crypto.randomInt(100000, 999999).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
+  // Clean up any existing OTPs for this email first
+  await prisma.passwordReset.deleteMany({
+    where: { 
+      email,
+      OR: [
+        { used: true },
+        { expiresAt: { lt: new Date() } }
+      ]
+    }
+  });
+
   // Save OTP to database
   await prisma.passwordReset.create({
     data: {
@@ -41,14 +52,23 @@ export const POST = asyncHandler(async (request: NextRequest) => {
   // Send email with OTP
   try {
     await emailService.sendPasswordResetEmail(email, otp);
-    console.log('Password reset OTP sent to:', email);
+    console.log('Password reset OTP sent successfully to:', email);
+    
+    return successResponse(
+      null,
+      'Password reset OTP has been sent to your email. Please check your inbox and spam folder.'
+    );
   } catch (error) {
     console.error('Failed to send password reset email:', error);
-    // Don't reveal email sending failure for security
+    
+    // Delete the OTP since email failed
+    await prisma.passwordReset.deleteMany({
+      where: { email, otp }
+    });
+    
+    return errorResponse(
+      'Failed to send email. Please try again later or contact support.',
+      500
+    );
   }
-
-  return successResponse(
-    null,
-    'If the email exists, you will receive a password reset code'
-  );
 });

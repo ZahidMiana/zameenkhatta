@@ -18,6 +18,11 @@ class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
+    // Validate email configuration
+    if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('Email configuration missing. Please check environment variables.');
+    }
+
     this.transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: parseInt(process.env.EMAIL_PORT || '587'),
@@ -26,6 +31,10 @@ class EmailService {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      // Add timeout and retry settings
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 5000,    // 5 seconds
+      socketTimeout: 15000,     // 15 seconds
     });
   }
 
